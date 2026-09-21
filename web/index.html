@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AutomataStudio — Finite Automata Editor &amp; Simulator</title>
+<meta name="description" content="Build, edit, simulate and analyse deterministic and non-deterministic finite automata in the browser: step-by-step simulation, NFA to DFA subset construction and DFA minimization.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="toolbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <circle cx="6" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="18" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="18" cy="12" r="2.2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M10 12 h4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+      <path d="M13 10.4 L14.6 12 L13 13.6" fill="currentColor"/>
+    </svg>
+    <span>AutomataStudio</span>
+  </div>
+
+  <div class="toolbar-group">
+    <button id="btn-new" class="ghost" title="New automaton">New</button>
+    <button id="btn-open" class="ghost" title="Open a .afjson file">Open</button>
+    <button id="btn-save" class="ghost" title="Download as .afjson">Save</button>
+    <button id="btn-export-png" class="ghost" title="Export the diagram as PNG">PNG</button>
+    <button id="btn-report" class="ghost" title="Printable report (save as PDF)">Report</button>
+  </div>
+
+  <div class="toolbar-group">
+    <select id="select-example" title="Load an example automaton">
+      <option value="">Examples…</option>
+    </select>
+  </div>
+
+  <div class="toolbar-group">
+    <button id="btn-undo" class="ghost" title="Undo (Ctrl+Z)" disabled>↶</button>
+    <button id="btn-redo" class="ghost" title="Redo (Ctrl+Y)" disabled>↷</button>
+  </div>
+
+  <div class="toolbar-group">
+    <button id="btn-layout" class="ghost" title="Arrange states in a circle">Auto-layout</button>
+    <button id="btn-fit" class="ghost" title="Fit the diagram to the view">Fit</button>
+    <button id="btn-zoom-in" class="ghost" title="Zoom in">+</button>
+    <button id="btn-zoom-out" class="ghost" title="Zoom out">−</button>
+  </div>
+
+  <div class="toolbar-group toolbar-end">
+    <button id="btn-theme" class="ghost" title="Toggle dark mode">🌙</button>
+    <button id="btn-help" class="ghost" title="Help">?</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ---------------- Left: editor ---------------- -->
+  <section class="panel panel-left" aria-label="Editor">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="states" role="tab">States</button>
+      <button class="tab" data-tab="alphabet" role="tab">Alphabet</button>
+      <button class="tab" data-tab="transitions" role="tab">Transitions</button>
+    </div>
+
+    <div class="tab-panel active" data-panel="states">
+      <div class="field-row">
+        <input id="input-state" type="text" placeholder="State name (e.g. q0)" maxlength="20" autocomplete="off">
+        <button id="btn-add-state">Add</button>
+      </div>
+      <ul id="list-states" class="item-list" aria-label="States"></ul>
+      <div class="button-row">
+        <button id="btn-set-start" class="secondary" disabled>Set as start</button>
+        <button id="btn-toggle-accept" class="secondary" disabled>Toggle accepting</button>
+      </div>
+      <div class="button-row">
+        <button id="btn-rename-state" class="secondary" disabled>Rename</button>
+        <button id="btn-remove-state" class="danger" disabled>Delete</button>
+      </div>
+      <p class="hint">Tip: drag states on the canvas. Double-click one to toggle whether it is accepting.</p>
+    </div>
+
+    <div class="tab-panel" data-panel="alphabet">
+      <div class="field-row">
+        <input id="input-symbol" type="text" placeholder="Symbol (one character)" maxlength="1" autocomplete="off">
+        <button id="btn-add-symbol">Add</button>
+      </div>
+      <ul id="list-alphabet" class="item-list" aria-label="Alphabet"></ul>
+      <button id="btn-remove-symbol" class="danger" disabled>Delete symbol</button>
+      <p class="hint">ε is reserved for epsilon transitions and is never part of the alphabet.</p>
+    </div>
+
+    <div class="tab-panel" data-panel="transitions">
+      <div class="field-grid">
+        <label>From<select id="select-source"></select></label>
+        <label>Symbol<select id="select-symbol"></select></label>
+        <label>To<select id="select-target"></select></label>
+      </div>
+      <button id="btn-add-transition">Add transition</button>
+      <ul id="list-transitions" class="item-list tall" aria-label="Transitions"></ul>
+      <button id="btn-remove-transition" class="danger" disabled>Delete transition</button>
+    </div>
+  </section>
+
+  <!-- ---------------- Center: canvas ---------------- -->
+  <section class="canvas-area" aria-label="Diagram">
+    <div class="canvas-header">
+      <input id="input-name" type="text" class="name-input" placeholder="Automaton name" maxlength="80">
+      <span id="badge-type" class="badge">—</span>
+    </div>
+    <div class="canvas-wrap">
+      <svg id="canvas" role="img" aria-label="Automaton diagram"></svg>
+      <div id="canvas-empty" class="canvas-empty">
+        <p><strong>No states yet.</strong></p>
+        <p>Add one in the States tab, or load an example from the toolbar.</p>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="dot normal"></i>State</span>
+      <span><i class="dot accept"></i>Accepting</span>
+      <span><i class="dot start-ring"></i>Start</span>
+      <span><i class="dot dead"></i>Dead</span>
+      <span><i class="dot unreachable"></i>Unreachable</span>
+      <span><i class="dot highlight"></i>Active</span>
+    </div>
+  </section>
+
+  <!-- ---------------- Right: analysis ---------------- -->
+  <section class="panel panel-right" aria-label="Analysis">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="properties" role="tab">Properties</button>
+      <button class="tab" data-tab="convert" role="tab">Convert</button>
+    </div>
+
+    <div class="tab-panel active" data-panel="properties">
+      <div id="properties-body"></div>
+    </div>
+
+    <div class="tab-panel" data-panel="convert">
+      <div class="button-row stacked">
+        <button id="btn-to-dfa">NFA → DFA (subset construction)</button>
+        <button id="btn-minimize">Minimize DFA</button>
+        <button id="btn-to-nfa" class="secondary">DFA → NFA</button>
+      </div>
+      <div id="convert-body" class="result-box">
+        <p class="hint">Run a conversion to see the full process here before applying it.</p>
+      </div>
+      <button id="btn-apply-conversion" class="apply" hidden>Use as current automaton</button>
+    </div>
+  </section>
+</main>
+
+<!-- ---------------- Bottom: simulation ---------------- -->
+<footer class="sim-bar" aria-label="Simulation">
+  <div class="sim-input">
+    <label for="input-string">Input string</label>
+    <input id="input-string" type="text" placeholder="e.g. 1011" autocomplete="off">
+    <button id="btn-simulate">Simulate</button>
+  </div>
+
+  <div class="sim-controls">
+    <button id="btn-step-first" class="secondary" disabled title="First step">⏮</button>
+    <button id="btn-step-prev" class="secondary" disabled title="Previous step">◀</button>
+    <button id="btn-step-auto" class="secondary" disabled title="Play automatically">▶ Auto</button>
+    <button id="btn-step-next" class="secondary" disabled title="Next step">▶</button>
+    <button id="btn-step-last" class="secondary" disabled title="Last step">⏭</button>
+  </div>
+
+  <div class="sim-readout">
+    <div id="sim-tape" class="tape" aria-label="Input tape"></div>
+    <div id="sim-step" class="sim-step">Enter a string and press Simulate.</div>
+  </div>
+
+  <div id="sim-verdict" class="verdict" aria-live="polite"></div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<dialog id="help-dialog" class="dialog">
+  <h2>AutomataStudio — quick guide</h2>
+  <ol>
+    <li><strong>States</strong> — add them in the left panel. Select one to set it as the start state, mark it as accepting, rename or delete it.</li>
+    <li><strong>Alphabet</strong> — add the symbols the automaton reads. One character each.</li>
+    <li><strong>Transitions</strong> — pick a source, a symbol (ε included) and a target. Parallel symbols between the same two states share one arrow.</li>
+    <li><strong>Canvas</strong> — drag states to rearrange, scroll to zoom, drag the background to pan. Double-click a state to toggle whether it accepts.</li>
+    <li><strong>Simulate</strong> — type a string and step through it. Active states and the edges just taken are highlighted in red.</li>
+    <li><strong>Convert</strong> — subset construction, DFA minimization and the trivial DFA→NFA view. Each one shows its process before you apply it.</li>
+    <li><strong>Files</strong> — Save downloads a <code>.afjson</code> file that the desktop app opens, and Open reads the same format.</li>
+  </ol>
+  <p class="hint">Keyboard: Ctrl+Z undo · Ctrl+Y redo · Enter simulates · ← → step through a simulation.</p>
+  <form method="dialog"><button class="apply">Close</button></form>
+</dialog>
+
+<input id="file-input" type="file" accept=".afjson,.json,application/json" hidden>
+
+<script src="js/automaton.js"></script>
+<script src="js/algorithms.js"></script>
+<script src="js/examples.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
