@@ -1,0 +1,52 @@
+========================================================
+ AutomataStudio - Editor de Automatas Finitos (AFD/AFND)
+========================================================
+
+CONTENIDO DE ESTA CARPETA
+--------------------------
+  AutomataStudio.exe   -> La aplicacion. NO necesita tener Python instalado.
+  Ejemplos\             -> 5 automatas de ejemplo listos para abrir (AFD y AFND).
+  LEEME.txt              -> Este archivo.
+
+COMO EJECUTAR
+--------------
+  1. Copie toda esta carpeta a donde prefiera (Escritorio, Documentos, etc.).
+     No es necesario instalar nada.
+  2. Haga doble clic en "AutomataStudio.exe" para abrir el programa.
+
+CREAR UN ACCESO DIRECTO EN EL ESCRITORIO (opcional)
+-----------------------------------------------------
+  1. Clic derecho sobre "AutomataStudio.exe".
+  2. Seleccione "Enviar a" -> "Escritorio (crear acceso directo)".
+  3. Listo: aparecera un icono en el escritorio para abrir la app.
+  (No mueva ni borre esta carpeta despues de crear el acceso directo,
+   ya que el acceso directo apunta al .exe dentro de ella).
+
+ADVERTENCIA DE WINDOWS AL ABRIRLO POR PRIMERA VEZ
+----------------------------------------------------
+  Windows SmartScreen puede mostrar un aviso de "editor desconocido" porque
+  el .exe no tiene una firma digital comercial (es normal en programas
+  academicos/personales, no es un virus). Para continuar:
+    "Mas informacion" -> "Ejecutar de todas formas".
+
+COMO ABRIR UN AUTOMATA DE EJEMPLO
+------------------------------------
+  Opcion A: Dentro de la app, use el menu "Ejemplos" (ya vienen precargados).
+  Opcion B: Menu "Archivo" -> "Abrir..." y seleccione un archivo .afjson
+            de la carpeta "Ejemplos".
+
+GUIA RAPIDA DE USO
+--------------------
+  1. Panel izquierdo: cree estados, defina el alfabeto y las transiciones.
+  2. Panel central: el automata se dibuja solo. Arrastre los estados con el
+     mouse y use la rueda para hacer zoom.
+  3. Panel inferior: escriba una cadena y presione "Simular" para ver el
+     recorrido paso a paso (con los controles Anterior/Siguiente/Auto).
+  4. Panel derecho: propiedades del automata, conversion AFND->AFD (con
+     tabla de subconjuntos), minimizacion de AFD, y conversion AFD->AFND.
+  5. Menu "Archivo": guardar/abrir proyectos (.afjson), exportar el
+     diagrama como imagen (PNG) o un reporte completo (PDF).
+  6. Menu "Ver" -> "Modo oscuro" para cambiar el tema.
+  7. Menu "Ayuda" -> "Ayuda integrada" tiene una guia dentro del programa.
+
+Cualquier duda, consulte la "Ayuda integrada" dentro de la aplicacion.

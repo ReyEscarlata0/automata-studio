@@ -1,0 +1,46 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+
+# ---- PyInstaller build artifacts ----
+build/
+dist/
+*.manifest
+*.spec.bak
+
+# ---- Testing / coverage ----
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---- Local user output ----
+*.log
+*.png.tmp
+exports/

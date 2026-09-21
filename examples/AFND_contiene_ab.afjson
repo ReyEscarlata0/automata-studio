@@ -1,0 +1,54 @@
+{
+  "name": "AFND: contiene la subcadena 'ab'",
+  "states": [
+    "s0",
+    "s1",
+    "s2"
+  ],
+  "alphabet": [
+    "a",
+    "b"
+  ],
+  "start_state": "s0",
+  "accept_states": [
+    "s2"
+  ],
+  "transitions": {
+    "s0": {
+      "a": [
+        "s0",
+        "s1"
+      ],
+      "b": [
+        "s0"
+      ]
+    },
+    "s1": {
+      "b": [
+        "s2"
+      ]
+    },
+    "s2": {
+      "a": [
+        "s2"
+      ],
+      "b": [
+        "s2"
+      ]
+    }
+  },
+  "positions": {
+    "s0": [
+      80,
+      150
+    ],
+    "s1": [
+      280,
+      60
+    ],
+    "s2": [
+      480,
+      150
+    ]
+  }
+}
