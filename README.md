@@ -53,6 +53,7 @@ same algorithms: a **web app** that runs entirely in the browser, and a
 - Light and dark themes, following the system preference by default
 - Responsive layout that works on tablets and phones
 - The web app is fully static: no server, no account, nothing leaves your machine
+<img width="1917" height="907" alt="image" src="https://github.com/user-attachments/assets/64022852-3a07-4737-865f-ce5dac999c65" />
 
 ---
 
